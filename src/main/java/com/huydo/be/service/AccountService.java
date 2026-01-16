@@ -7,6 +7,5 @@ import com.huydo.be.entity.Account;
 public interface AccountService {
     Account register(RegisterRequest request);
     String login(LoginRequest request);
-
 }
 

@@ -19,5 +19,6 @@ public class UserController {
     public ResponseEntity<UserProfileResponse> me() {
         return ResponseEntity.ok(userService.getCurrentUser());
     }
+
 }
 

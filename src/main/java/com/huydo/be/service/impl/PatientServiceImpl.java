@@ -1,11 +1,14 @@
 package com.huydo.be.service.impl;
 
+import com.huydo.be.dto.request.AppointmentRequest;
 import com.huydo.be.dto.request.PatientProfileRequest;
 import com.huydo.be.dto.response.PatientProfileResponse;
 import com.huydo.be.entity.Account;
+import com.huydo.be.entity.Appointments;
 import com.huydo.be.entity.Patient;
 import com.huydo.be.enums.Role;
 import com.huydo.be.repository.AccountRepository;
+import com.huydo.be.repository.AppointmentRepository;
 import com.huydo.be.repository.PatientRepository;
 import com.huydo.be.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientRepository patientRepository;
     private final AccountRepository accountRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Override
     public PatientProfileResponse getMyProfile() {
@@ -74,6 +78,17 @@ public class PatientServiceImpl implements PatientService {
         patient.setInsuranceNumber(request.getInsuranceNumber());
 
         patientRepository.save(patient);
+    }
+
+    @Override
+    public void createAppointment(AppointmentRequest request, Long accountId) {
+        Appointments appointments = Appointments.builder()
+                .appointmentDate(request.getAppointmentDate())
+                .specialty(request.getSpecialty())
+                .doctorId(request.getDoctorId())
+                .patientAccountId(accountId)
+                .build();
+        appointmentRepository.save(appointments);
     }
 
 }

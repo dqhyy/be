@@ -28,8 +28,6 @@ public class AuthController {
                 .build();
     }
 
-
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
         String token = accountService.login(request);
