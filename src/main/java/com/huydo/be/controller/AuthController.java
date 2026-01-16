@@ -1,8 +1,10 @@
 package com.huydo.be.controller;
 
+import com.huydo.be.dto.request.ApiResponse;
 import com.huydo.be.dto.request.LoginRequest;
 import com.huydo.be.dto.request.RegisterRequest;
 import com.huydo.be.dto.response.LoginResponse;
+import com.huydo.be.entity.Account;
 import com.huydo.be.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +22,13 @@ public class AuthController {
     private final AccountService accountService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
-        accountService.register(request);
-        return ResponseEntity.ok("Register success");
+    ApiResponse<Account> register(@RequestBody @Valid RegisterRequest request) {
+        return ApiResponse.<Account>builder()
+                .result(accountService.register(request))
+                .build();
     }
+
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {

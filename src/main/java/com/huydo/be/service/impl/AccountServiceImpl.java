@@ -23,7 +23,7 @@ public class AccountServiceImpl implements AccountService {
     private final JwtUtil jwtUtil;
 
     @Override
-    public void register(RegisterRequest request) {
+    public Account register(RegisterRequest request) {
 
         if (accountRepository.existsByUsername(request.getUsername())) {
             throw new RuntimeException("Username already exists");
@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        accountRepository.save(account);
+        return accountRepository.save(account);
     }
 
     @Override
