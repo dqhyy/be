@@ -24,17 +24,15 @@ public class JwtUtil {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-
     public String generateToken(Account account) {
         return Jwts.builder()
                 .subject(account.getUsername())
                 .claim("role", account.getRole().name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
-
 
     public String extractUsername(String token) {
         return Jwts.parser()
@@ -45,7 +43,6 @@ public class JwtUtil {
                 .getSubject();
     }
 
-
     public boolean validateToken(String token) {
         try {
             extractUsername(token);
@@ -55,4 +52,3 @@ public class JwtUtil {
         }
     }
 }
-

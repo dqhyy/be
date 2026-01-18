@@ -1,9 +1,14 @@
 package com.huydo.be.entity;
 
 import com.huydo.be.enums.AccountStatus;
+import com.huydo.be.enums.Gender;
 import com.huydo.be.enums.Role;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +18,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
 
     @Id
@@ -39,5 +45,22 @@ public class Account {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
-}
 
+    private String fullName;
+
+    private String phoneNumber;
+
+    private String address;
+
+    private java.time.LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
+
+    @Column(unique = true)
+    private String citizenIdentificationCard;
+}

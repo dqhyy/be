@@ -2,20 +2,18 @@ package com.huydo.be.exception;
 
 import com.huydo.be.dto.request.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
-import java.util.Objects;
-
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(Exception exception) {
+    ResponseEntity<ApiResponse<?>> handlingRuntimeException(Exception exception) {
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
-        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
+        apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage() + ": " + exception.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
@@ -29,14 +27,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception){
+    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
         return ResponseEntity.status(errorCode.getHttpStatusCode()).body(
                 ApiResponse.builder()
                         .code(errorCode.getCode())
                         .message(errorCode.getMessage())
-                        .build()
-        );
+                        .build());
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
@@ -45,9 +42,9 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
 
-        try{
+        try {
             errorCode = ErrorCode.valueOf(enumKey);
-        } catch(IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
 
         }
 

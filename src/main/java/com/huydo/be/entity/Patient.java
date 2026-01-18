@@ -1,10 +1,12 @@
 package com.huydo.be.entity;
 
-import com.huydo.be.enums.Gender;
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "patients")
@@ -12,29 +14,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Patient {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "account_id", nullable = false, unique = true)
-    private Account account;
-
-    private String fullName;
-
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
-
-    private LocalDate dateOfBirth;
-
-    private String phoneNumber;
-
-    private String address;
-
-    private String identityNumber;
-
+@SuperBuilder
+public class Patient extends Account {
     private String insuranceNumber;
 }

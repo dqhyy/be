@@ -1,9 +1,12 @@
 package com.huydo.be.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDate;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "staffs")
@@ -11,22 +14,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Staff {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne
-    @JoinColumn(name = "account_id", nullable = false, unique = true)
-    private Account account;
-
-    private String fullName;
-    private String phone;
-    private String email;
-
+@SuperBuilder
+public class Staff extends Account {
     private String department;
     private String position;
 }
-

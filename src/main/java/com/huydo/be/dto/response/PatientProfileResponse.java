@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Builder
 public class PatientProfileResponse {
 
+    private Long id;
+    private String username;
     private String fullName;
     private String gender;
     private LocalDate dateOfBirth;
@@ -16,5 +18,6 @@ public class PatientProfileResponse {
     private String address;
     private String identityNumber;
     private String insuranceNumber;
+    private String email;
+    private byte[] image;
 }
-

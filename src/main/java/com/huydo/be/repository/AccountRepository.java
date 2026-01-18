@@ -1,7 +1,6 @@
 package com.huydo.be.repository;
 
 import com.huydo.be.entity.Account;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

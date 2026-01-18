@@ -1,5 +1,6 @@
 package com.huydo.be.entity;
 
+import com.huydo.be.enums.AppointmentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Table(name = "appointments")
@@ -48,6 +48,13 @@ public class Appointments {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "appointment_order")
+    private Integer appointmentOrder;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "appointment_status", length = 32)
+    private AppointmentStatus status;
 
     @PreUpdate
     protected void onUpdate() {

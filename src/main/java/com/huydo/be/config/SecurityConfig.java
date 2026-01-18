@@ -4,7 +4,6 @@ import com.huydo.be.enums.Role;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,26 +28,27 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/token", "/auth/introspect"};
+    private final String[] PUBLIC_ENDPOINTS = { "/users", "/auth/token", "/auth/introspect" };
 
     @Value("${jwt.signerKey}")
     private String signerKey;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/*").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/users")
+        httpSecurity
+                .authorizeHttpRequests(request -> request
+                        // Explicitly authenticated endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/auth/avatar").authenticated()
+                        // Public endpoints
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users")
                         .hasRole(Role.ADMIN.name())
                         .anyRequest().authenticated());
 
-        httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer ->
-                                jwtConfigurer.decoder(jwtDecoder())
-                                        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
-                        .authenticationEntryPoint(new JwtAuthEntryPoint())
-        );
+        httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                .jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .authenticationEntryPoint(new JwtAuthEntryPoint()));
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.cors(cors -> cors.configurationSource(corsConfigurationSource()));
@@ -57,7 +57,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
         corsConfiguration.addAllowedOrigin("http://localhost:5173");
@@ -71,9 +71,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter(){
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("role");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
@@ -82,8 +83,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    JwtDecoder jwtDecoder(){
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(),"HS512");
+    JwtDecoder jwtDecoder() {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HmacSHA512");
         return NimbusJwtDecoder
                 .withSecretKey(secretKeySpec)
                 .macAlgorithm(MacAlgorithm.HS512)
@@ -91,7 +92,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder(){
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
 

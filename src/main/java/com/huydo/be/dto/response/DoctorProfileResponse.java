@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class DoctorProfileResponse {
 
+    private Long id;
     private String fullName;
     private String phone;
     private String email;
@@ -14,5 +15,5 @@ public class DoctorProfileResponse {
     private String degree;
     private Integer yearsOfExperience;
     private Boolean isActive;
+    private String description;
 }
-
